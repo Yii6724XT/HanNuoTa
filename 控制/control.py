@@ -129,6 +129,7 @@ class Control:
         self.music.play()
         self.history.clear()
         self.game.tower.auto_solve()
+        self.ifwin = True
     
     #呼出侧栏
     def tool_hud_in(self):
