@@ -16,10 +16,10 @@ class Control:
         self.display = main_game.display
         self.render = main_game.render
         self.music = main_game.music
+        self.timer = main_game.timer
     
     def _init_2(self,main_game):
         self.history = main_game.history
-        self.timer = main_game.timer
 
     def update(self):
         #获取键盘状态
@@ -134,7 +134,8 @@ class Control:
     
     #呼出侧栏
     def tool_hud_in(self):
-        self.timer.pause()
+        if self.ifsetup:
+            self.timer.pause()
         self.music.pause()
         self.display.pause_bt.active_switch('inactive')
         self._act_switch('inactive')
@@ -159,7 +160,8 @@ class Control:
         self.display.pause_bt.active_switch('active')
         if not self.ifwin:
             self._act_switch('active')
-            self.timer.unpause()
+            if self.ifsetup:
+                self.timer.unpause()
 
     #结算
     def settle_accounts(self):
