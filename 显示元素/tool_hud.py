@@ -62,8 +62,13 @@ class ToolHUD:
     def active_switch(self,status):
         if status == 'active':
             if self.game.control.ifsetup:
-                for bt in self.bts:
-                    bt.active_switch('active')
+                if not self.game.control.ifwin:
+                    for bt in self.bts:
+                        bt.active_switch('active')
+                else:
+                    self.bts[0].active_switch('active')
+                    self.bts[1].active_switch('active')
+                    self.bts[-1].active_switch('active')
             else:
                 #若游戏未完成设置，仅返回和退出可用
                 self.bts[0].active_switch('active')

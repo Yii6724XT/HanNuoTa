@@ -1,6 +1,7 @@
 from 显示元素.control_bts import *
 from 显示元素.chat_boxes import *
 from 显示元素.tool_hud import ToolHUD
+from 显示元素.title import Step
 import pygame
 
 class Display:
@@ -39,3 +40,7 @@ class Display:
 
     def make_input_box(self):
         self.chat_boxes.add(Input_Box(self.game))
+    
+    def make_step(self):
+        self.step = Step(self.game)
+        self.titles.add(self.step)

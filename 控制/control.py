@@ -9,12 +9,16 @@ class Control:
         self.game = main_game
         #设置初始状态
         self.ifsetup = False
+        self.ifwin = False
         self.select_step = 0
 
-    def _init_1(self,display,render):
-        self.display = display
-        self.render = render
+    def _init_1(self,main_game):
+        self.display = main_game.display
+        self.render = main_game.render
+        self.music = main_game.music
     
+    def _init_2(self,main_game):
+        self.history = main_game.history
 
     def update(self):
         #获取键盘状态
@@ -49,8 +53,8 @@ class Control:
                 tower.select(order)
                 self.step_1 = order
             except:
-                title = Title(self.game,'你不能移动空气',60)
-                self.display.chat_boxes.add(title)
+                title = Title(self.game,'你不能移动空气',120)
+                self.display.titles.add(title)
                 #选择空塔不算步数
                 self.select_step -= 1
         elif self.select_step == 2:
@@ -60,26 +64,50 @@ class Control:
             result = tower.check_move(step)
             if result[0] == 'True':
                 #通过移动检测，开始移动
-                self._act_switch('inactive')
-                moving = Moving_Curve(self.game,step)
-                self.render.moving(moving)
-                tower.move(step)
-                self._act_switch('active')
+                self.history.save(step)
+                self._piece_move(step)
                 tower.unselect(order)
                 if tower.check():
                     #游戏完成
                     self._act_switch('inactive')
-                    title = Title(self.game,'你赢了',60000)
-                    self.display.titles.add(title)
+                    self.settle_accounts()
             else:
                 #移动检测未通过
-                title = Title(self.game,result[1],60)
+                title = Title(self.game,result[1],120)
                 self.display.titles.add(title)
                 tower.unselect(self.step_1)
                 tower.unselect(self.step_2)
             self.select_step = 0
         else:
             raise Exception('发生啥事？')
+    
+    def _piece_move(self,step):
+        tower = self.game.tower
+        self._act_switch('inactive')
+        moving = Moving_Curve(self.game,step)
+        self.render.moving(moving)
+        tower.move(step)
+        self._act_switch('active')
+
+    def undo(self):
+        result = self.history.check('undo')
+        if result[0] == True:
+            #可以撤销
+            step = self.history.undo()
+            self._piece_move(step)
+        else:
+            title = Title(self.game,result[1],120)
+            self.display.titles.add(title)
+
+    def redo(self):
+        result = self.history.check('redo')
+        if result[0] == True:
+            #可以重做
+            step = self.history.redo()
+            self._piece_move(step)
+        else:
+            title = Title(self.game,result[1],120)
+            self.display.titles.add(title)
 
     def _act_switch(self,status):
         if status == 'active':
@@ -88,7 +116,7 @@ class Control:
             for chat_box in self.display.chat_boxes:
                 chat_box.active_switch('active')
         else:
-            for bt  in self.display.control_bts:
+            for bt in self.display.control_bts:
                 bt.active_switch('inactive')
             for chat_box in self.display.chat_boxes:
                 chat_box.active_switch('inactive')
@@ -97,10 +125,14 @@ class Control:
     def auto_solve(self):
         self.tool_hud_out()
         self._act_switch('inactive')
+        self.music.load('solve')
+        self.music.play()
+        self.history.clear()
         self.game.tower.auto_solve()
     
     #呼出侧栏
     def tool_hud_in(self):
+        self.music.pause()
         self.display.pause_bt.active_switch('inactive')
         self._act_switch('inactive')
         tool_hud = self.display.tool_hud
@@ -113,6 +145,7 @@ class Control:
     
     #召回侧栏
     def tool_hud_out(self):
+        self.music.unpause()
         tool_hud = self.display.tool_hud
         tool_hud.active_switch('inactive')
         x,y = tool_hud.bg_rect.midleft
@@ -121,11 +154,36 @@ class Control:
         moving = Moving_Straight(self.game,tool_hud,'midleft',coordinate)
         self.render.moving(moving)
         self.display.pause_bt.active_switch('active')
-        self._act_switch('active')
-    
+        if not self.ifwin:
+            self._act_switch('active')
+
+    def settle_accounts(self):
+        self.ifwin = True
+        title = Title(self.game,'你赢了',-1)
+        self.display.titles.add(title)
+        step = self.history.step
+        min_step = 2**self.game.n-1
+        print(step,min_step)
+        if step == min_step:
+            self.music.load('best')
+        elif step <= min_step*1.2:
+            self.music.load('better')
+        elif step <= min_step*1.4:
+            self.music.load('good')
+        else:
+            self.music.load('notbad')
+        self.music.play()
+        step_uhd = self.display.step
+        x,y = step_uhd.rect.center
+        tx,ty = self.render.screen.get_rect().center
+        coordinate = (x,y,tx,ty)
+        moving = Moving_Straight(self.game,step_uhd,'center',coordinate)
+        self.render.moving(moving)
+
     def restart(self):
         self.tool_hud_out()
         self.ifsetup = False
+        self.history.clear()
         for i in self.display.control_bts.copy():
             self.display.control_bts.remove(i)
         for i in self.display.pieces.copy():

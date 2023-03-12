@@ -135,4 +135,7 @@ class Moving_Straight:
         else:
             self.element.telepoint(self.anchor_point,self.tx,self.ty)
             return True
+    
+    def tp(self):
+        self.element.telepoint('center',self.tx,self.ty)
         

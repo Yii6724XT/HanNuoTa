@@ -5,7 +5,7 @@ class Settings:
                        'screen':
                             {
                              'size':(1600,900),
-                             'full_screen':False,
+                             'full_screen':True,
                              'max_fps':120
                             },
                         'color':
@@ -28,6 +28,10 @@ class Settings:
                              'enabled':True,
                              'speed':30,
                              'speed_s':10
+                            },
+                        'history':
+                            {
+                             'max_memory':10
                             }
                       }
     #查找设置

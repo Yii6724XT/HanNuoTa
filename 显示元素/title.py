@@ -29,8 +29,9 @@ class Info(Sprite):
         self.rect = self.msg_image.get_rect()
 
     def update(self,msg):
-        self.msg = msg
-        self._make_msg_img()
+        if msg != self.msg:
+            self.msg = msg
+            self._make_msg_img()
         self.screen.blit(self.msg_image,self.rect)
 
 
@@ -46,8 +47,28 @@ class Title(Info):
             self.time -= 1
         elif self.time == 0:
             self.group.remove(self)
+        elif self.time == -1:
+            self.screen.blit(self.msg_image,self.rect)
 
     def set_location(self):
         x,y = self.render.locations['chat_box']['title']
         y -= self.rect.height
         self.rect.center = (x,y)
+
+class Step(Info):
+    def __init__(self,main_game):
+        super().__init__(main_game,'步数：0')
+        self.history = main_game.history
+
+    def set_location(self):
+        self.rect.midleft = self.render.locations['chat_box']['step']
+
+    def update(self):
+        new_msg = '步数：'+str(self.history.step)
+        if new_msg != self.msg:
+            self.msg = new_msg
+            self._make_msg_img()
+        self.screen.blit(self.msg_image,self.rect)
+    
+    def telepoint(self,anchor_point,tx,ty):
+        self.rect.center = (tx,ty)

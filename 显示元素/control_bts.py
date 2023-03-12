@@ -29,7 +29,7 @@ class UndoBt(Button):
         self.msg_rect.center = self.center
 
     def _function(self):
-        pass
+        self.control.undo()
 
 
 class RedoBt(Button):
@@ -43,7 +43,7 @@ class RedoBt(Button):
         self.msg_rect.center = self.center
 
     def _function(self):
-        pass
+        self.control.redo()
 
 
 class PauseBt(Button):

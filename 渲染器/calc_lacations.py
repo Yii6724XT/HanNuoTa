@@ -39,12 +39,14 @@ def calc_locations(screen):
     add_bt_x = width*(2/3)
     reduce_bt_x = width*(1/3)
     bt_y = height*(11/18)
+    step_x = width*(1/16)
     anchor_points['chat_box'] = {
                                  'title':(title_x,title_y),
                                  'confirm_bt':(confirm_bt_x,bt_y),
                                  'cancel_bt':(cancel_bt_x,bt_y),
                                  'add_bt':(add_bt_x,title_y),
-                                 'reduce_bt':(reduce_bt_x,title_y)
+                                 'reduce_bt':(reduce_bt_x,title_y),
+                                 'step':(step_x,left_hud_y_1)
                                 }
     #右侧暂停按钮
     right_bt_x = width*(31/32)

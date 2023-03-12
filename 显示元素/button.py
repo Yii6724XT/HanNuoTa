@@ -20,6 +20,9 @@ class Button(Sprite):
         self.size = size
         self.set_size()
         self.active = True
+        #音效初始化
+        self.click = pygame.mixer.Sound('sounds/click.ogg')
+        self.click.set_volume(1)
 
     #切换活动状态
     def active_switch(self,status):
@@ -90,6 +93,7 @@ class Button(Sprite):
                     self.flag = False
                     #点击按钮时设置为当前颜色，即静止
                     color = self.color.color
+                    self.click.play()
                     self._function()
                 else:
                     color = self.color.rgb_update()
