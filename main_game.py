@@ -5,6 +5,7 @@ from 显示元素.display import Display
 from 塔.tower import Tower
 from 历史记录.history import History
 from sounds.music import Music
+from 控制.timer import Timer
 import pygame,sys
 
 class MainGame:
@@ -22,6 +23,8 @@ class MainGame:
         self.display = Display(self)
         #初始化背景音乐
         self.music = Music()
+        #初始化计时器
+        self.timer = Timer()
         #默认层数
         self.n = self.settings.get('default_n')
 
@@ -58,6 +61,8 @@ class MainGame:
         self.control._init_2(self)
         self.display.make_control_bts()
         self.display.make_step()
+        #开始计时
+        self.timer.start()
         while True:
             try:
                 self.control.update()

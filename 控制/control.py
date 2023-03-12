@@ -1,4 +1,4 @@
-from 显示元素.title import Title
+from 显示元素.title import Title,Time
 from 渲染器.moving_creater import *
 import pygame,sys
 
@@ -19,6 +19,7 @@ class Control:
     
     def _init_2(self,main_game):
         self.history = main_game.history
+        self.timer = main_game.timer
 
     def update(self):
         #获取键盘状态
@@ -133,6 +134,7 @@ class Control:
     
     #呼出侧栏
     def tool_hud_in(self):
+        self.timer.pause()
         self.music.pause()
         self.display.pause_bt.active_switch('inactive')
         self._act_switch('inactive')
@@ -157,31 +159,69 @@ class Control:
         self.display.pause_bt.active_switch('active')
         if not self.ifwin:
             self._act_switch('active')
+            self.timer.unpause()
 
+    #结算
     def settle_accounts(self):
+        interval = round(self.timer.get(),1)
         self.ifwin = True
-        title = Title(self.game,'你赢了',-1)
-        self.display.titles.add(title)
         step = self.history.step
         min_step = 2**self.game.n-1
-        print(step,min_step)
+        #步数部分的分
         if step == min_step:
-            self.music.load('best')
+            score_1 = 100
         elif step <= min_step*1.2:
-            self.music.load('better')
+            score_1 = 75
         elif step <= min_step*1.4:
+            score_1 = 50
+        else:
+            score_1 = 25
+        #时间部分的分
+        ave_time = interval/step
+        if ave_time <= 1:
+            score_2 = 100
+        elif ave_time <= 2:
+            score_2 = 75
+        elif ave_time <= 4:
+            score_2 = 50
+        else:
+            score_2 = 25
+        #最终结算
+        score = score_1*0.4 + score_2*0.6
+        if score == 100:
+            self.music.load('best')
+            rank = 'φ'
+        elif score >= 75:
+            self.music.load('better')
+            rank = 'A'
+        elif score >= 50:
             self.music.load('good')
+            rank = 'B'
         else:
             self.music.load('notbad')
+            rank = 'C'
         self.music.play()
+        color = self.settings.get('color','rank',rank)
+        self._settle_accounts_ani(interval,color,rank)
+
+    def _settle_accounts_ani(self,interval,color,rank):
+        title = Title(self.game,f'{rank} 你赢了 {rank}',-1,color)
+        self.display.titles.add(title)
+        self.display.make_time(interval)
+        time = self.display.time
+        x,y = time.rect.center
+        tx,ty = self.render.screen.get_rect().center
+        coordinate = (x,y,tx,ty-time.rect.height)
+        moving = Moving_Straight(self.game,time,'center',coordinate)
+        self.render.moving(moving)
         step_uhd = self.display.step
         x,y = step_uhd.rect.center
-        tx,ty = self.render.screen.get_rect().center
         coordinate = (x,y,tx,ty)
         moving = Moving_Straight(self.game,step_uhd,'center',coordinate)
         self.render.moving(moving)
 
     def restart(self):
+        self.timer.reset()
         self.tool_hud_out()
         self.ifsetup = False
         self.history.clear()

@@ -1,7 +1,7 @@
 from 显示元素.control_bts import *
 from 显示元素.chat_boxes import *
 from 显示元素.tool_hud import ToolHUD
-from 显示元素.title import Step
+from 显示元素.title import *
 import pygame
 
 class Display:
@@ -44,3 +44,7 @@ class Display:
     def make_step(self):
         self.step = Step(self.game)
         self.titles.add(self.step)
+    
+    def make_time(self,interval):
+        self.time = Time(self.game,interval)
+        self.titles.add(self.time)

@@ -36,7 +36,8 @@ class Info(Sprite):
 
 
 class Title(Info):
-    def __init__(self,main_game,msg,time):
+    def __init__(self,main_game,msg,time,color=(0,0,0)):
+        self.color = color
         super().__init__(main_game,msg)
         self.time = time
         self.group = main_game.display.titles
@@ -54,6 +55,16 @@ class Title(Info):
         x,y = self.render.locations['chat_box']['title']
         y -= self.rect.height
         self.rect.center = (x,y)
+    
+    def _make_msg_img(self):
+        if self.screen.get_rect().height > 900:
+            msg_size = self.settings.get('font','full_screen','pause')
+        else:
+            msg_size = self.settings.get('font','default','pause')
+        font_name = self.settings.get('font','font_name')
+        font = pygame.font.SysFont(font_name,msg_size)
+        msg_color = self.color
+        self.msg_image = font.render(self.msg,True,msg_color)
 
 class Step(Info):
     def __init__(self,main_game):
@@ -68,6 +79,24 @@ class Step(Info):
         if new_msg != self.msg:
             self.msg = new_msg
             self._make_msg_img()
+        self.screen.blit(self.msg_image,self.rect)
+    
+    def telepoint(self,anchor_point,tx,ty):
+        self.rect.center = (tx,ty)
+
+class Time(Info):
+    def __init__(self,main_game,interval):
+        h = interval//3600
+        interval -= 3600*h
+        m = interval//60
+        s = interval-interval*60*m
+        print(f'用时：{h}h{m}m{s}s')
+        super().__init__(main_game,f'用时{h}h{m}m{s}s')
+    
+    def set_location(self):
+        self.rect.topleft = self.render.screen.get_rect().bottomright
+    
+    def update(self):
         self.screen.blit(self.msg_image,self.rect)
     
     def telepoint(self,anchor_point,tx,ty):

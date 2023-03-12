@@ -5,7 +5,7 @@ class Settings:
                        'screen':
                             {
                              'size':(1600,900),
-                             'full_screen':True,
+                             'full_screen':False,
                              'max_fps':120
                             },
                         'color':
@@ -14,7 +14,13 @@ class Settings:
                              'rgb_speed':10,
                              'button_seed':200,
                              'button_gray':(127,127,127),
-                             'tool_hud':(14,84,155)
+                             'tool_hud':(14,84,155),
+                             'rank':{
+                                     'φ':(255,146,1),
+                                     'A':(239,95,168),
+                                     'B':(29,177,0),
+                                     'C':(0,0,0)
+                                    }
                             },
                         'font':
                             {
