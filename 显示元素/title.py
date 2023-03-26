@@ -89,7 +89,7 @@ class Time(Info):
         h = interval//3600
         interval -= 3600*h
         m = interval//60
-        s = interval-interval*60*m
+        s = interval-60*m
         print(f'用时：{h}h{m}m{s}s')
         super().__init__(main_game,f'用时{h}h{m}m{s}s')
     

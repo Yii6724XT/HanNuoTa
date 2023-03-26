@@ -19,6 +19,7 @@ class ToolHUD:
         #在这里加入其他功能按钮
         self.bts.append(ReBt(self.game))
         self.bts.append(AutoBt(self.game))
+        self.bts.append(AniBt(self.game))
         #
         self.bts.append(QuitBt(self.game))
         for bt in self.bts:
@@ -69,10 +70,12 @@ class ToolHUD:
                     self.bts[0].active_switch('active')
                     self.bts[1].active_switch('active')
                     self.bts[-1].active_switch('active')
+                    self.bts[-2].active_switch('active')
             else:
                 #若游戏未完成设置，仅返回和退出可用
                 self.bts[0].active_switch('active')
                 self.bts[-1].active_switch('active')
+                self.bts[-2].active_switch('active')
         else:
             for bt in self.bts:
                 bt.active_switch('inactive')

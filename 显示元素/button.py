@@ -44,30 +44,30 @@ class Button(Sprite):
         if self.size == 'large':
             width = screen_width*(1/8)
             height = screen_height*(1/15)
-            msg_size = self.settings.get('font',screen_size,'ABC')
+            self.msg_size = self.settings.get('font',screen_size,'ABC')
         elif self.size == 'medium':
             width = screen_width*(1/8)
             height = screen_height*(1/15)
-            msg_size = self.settings.get('font',screen_size,'pause')
+            self.msg_size = self.settings.get('font',screen_size,'pause')
         elif self.size == 'small':
             width = screen_width*(2/64)
             height = screen_height*(1/18)
-            msg_size = self.settings.get('font',screen_size,'tool')
+            self.msg_size = self.settings.get('font',screen_size,'tool')
         else:
             raise Exception('未定义的按钮大小')
         self.rect = pygame.Rect(0,0,width,height)
         #设置字体
-        self.msg_image = self._make_msg_image(msg_size)
+        self.msg_image = self._make_msg_image(self.msg)
         self.msg_rect = self.msg_image.get_rect()
         #flag
         self.flag = True
 
     #创建按钮文字
-    def _make_msg_image(self,msg_size):
+    def _make_msg_image(self,msg):
         font_name = self.settings.get('font','font_name')
-        font = pygame.font.SysFont(font_name,msg_size)
+        font = pygame.font.SysFont(font_name,self.msg_size)
         msg_color = self.settings.get('font','color')
-        msg_image = font.render(self.msg,True,msg_color)
+        msg_image = font.render(msg,True,msg_color)
         return msg_image
 
     #设置按钮位置

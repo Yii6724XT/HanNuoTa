@@ -103,3 +103,25 @@ class AutoBt(Button):
 
     def _function(self):
         self.control.auto_solve()
+
+class AniBt(Button):
+    def __init__(self, main_game):
+        if main_game.settings.get('animation','enabled'):
+            msg = '动画：开'
+        else:
+            msg = '动画，关'
+        super().__init__(main_game,msg, 'medium')
+
+    def set_location(self,x,y):
+        self.rect.center = (x,y)
+        self.msg_rect.center = (x,y)
+    
+    def _function(self):
+        present = self.settings.get('animation','enabled')
+        self.settings.settings['animation']['enabled'] = \
+        not present
+        if not present:
+            msg = '动画：开'
+        else:
+            msg = '动画：关'
+        self.msg_image = self._make_msg_image(msg)
